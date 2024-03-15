@@ -64,7 +64,7 @@ with expand_items:
     mission_items = st.data_editor(mission_items)
 
 #%% Number of Bins
-num_bins = st.slider("Number of Bins", 1, 10, 1)
+num_bins = st.slider("Number of Bins", 1, 12, 1)
 
 #%% Pack Items
 item_objects = [bf.Item(row['item'], row['length'], row['width'], row['height'], row['weight'], row['volume'], row['utilization'], row['size'], row['count']) for index, row in mission_items.iterrows()]
