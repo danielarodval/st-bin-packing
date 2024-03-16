@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st
 
 class Item:
     def __init__(self, name, length, width, height, weight, volume, conditions, size, count=1):
@@ -105,3 +106,22 @@ def pack_items(items, bins):
                 break  # Break if we can't fit an item to move to the next
 
     return bins, unloaded_items
+
+def print_bins(packed_bins):
+    for i, bin in enumerate(packed_bins, start=1):
+        st.write(f"##### Bin {i}:")
+        for stack in bin.stacks:
+            #concatenate a list of items into a string
+            st.write(f"* Stack {bin.stacks.index(stack) + 1}:")
+            if len(stack) > 100:
+                st.write(f"Item Count: {len(stack)}")
+            else:
+                items = ', '.join([item.name for item in stack])
+                st.write(f"{items}")
+            
+            for item in stack:
+                #st.write(f"  {item.name} (Size: {item.size}, Volume: {item.volume})")
+                st.write()
+        #print bin volume left
+        st.write(f"Volume Left: {(bin.max_volume - bin.current_volume).round(2)}")
+        st.divider()

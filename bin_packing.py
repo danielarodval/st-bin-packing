@@ -86,27 +86,11 @@ if(missing_items == []):
 else:
     st.write("#### Missing Items")
     for item in missing_items:
-        st.write(f"* {item.name}")
+        st.write(f"* {item.name} {item.packed_count}/{item.count}")
 
 st.write("#### Packed Bins")
 
 num_bins = len(packed_bins)
 num_columns = min(num_bins, 5)  # Maximum of 5 columns
 
-for i, bin in enumerate(packed_bins, start=1):
-    st.write(f"##### Bin {i}:")
-    for stack in bin.stacks:
-        #concatenate a list of items into a string
-        st.write(f"* Stack {bin.stacks.index(stack) + 1}:")
-        if len(stack) > 100:
-            st.write(f"Item Count: {len(stack)}")
-        else:
-            items = ', '.join([item.name for item in stack])
-            st.write(f"{items}")
-        
-        for item in stack:
-            #st.write(f"  {item.name} (Size: {item.size}, Volume: {item.volume})")
-            st.write()
-    #print bin volume left
-    st.write(f"Volume Left: {bin.max_volume - bin.current_volume}")
-    st.divider()
+bf.print_bins(packed_bins)
