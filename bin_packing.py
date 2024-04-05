@@ -14,7 +14,7 @@ import numpy as np
 st.set_page_config(layout="wide")
 
 st.title("Bin Packing Test")
-st.write("## USSF SPEC/Materials Testing")
+st.write("## Item Ledger Configuration")
 
 #%% Load Data
 df = pd.read_csv('Cost Estimates.csv')
