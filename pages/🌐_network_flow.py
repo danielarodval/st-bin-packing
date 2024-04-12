@@ -38,8 +38,39 @@ with st.expander("View Imported Data"):
 st.write("### Container Selection")
 selected_containers = {}
 for container in containers['item'].unique():
-    selected_containers[container] = st.number_input(f"Number of {container}", min_value=1, max_value=12, step=1)
+    selected_containers[container] = st.number_input(f"Number of {container}", min_value=0, max_value=12, step=1)
 
 total_containers = sum(selected_containers.values())
 if total_containers > 12:
     st.error("The total number of containers cannot exceed 12. Please adjust your selections.")
+
+#%% Select Mission Type
+mission_types = items.loc[items['utilization'] != 'General', 'utilization'].unique()
+selected_mission_types = st.multiselect("Select Mission Types", mission_types)
+if 'General' in selected_mission_types or not selected_mission_types:
+    mission_items = items.copy()
+else:
+    mission_items = pd.concat([items.loc[items['utilization'] == 'General'], items.loc[items['utilization'].isin(selected_mission_types)]])
+
+#%% Initialize Bins based on selected containers
+bins = []
+for container, count in selected_containers.items():
+    for _ in range(count):
+        container_specs = containers.loc[containers['item'] == container].iloc[0]
+        bins.append(bf.Bin(
+            max_volume=container_specs['volume'],
+            max_weight=container_specs['weight'],
+            max_height=container_specs['height'],
+            max_length=container_specs['length'],
+            max_width=container_specs['width']))
+        
+#%% Pack Items
+packed_bins, missing_items = bf.pack_items([bf.Item(row['item'], row['length'], row['width'], row['height'], row['weight'], row['volume'], row['utilization'], row['size'], row['count']) for index, row in mission_items.iterrows()], bins)
+
+# Display results
+if missing_items:
+    st.write("#### Missing Items")
+    for item in missing_items:
+        st.write(f"* {item.name} {item.packed_count}/{item.count}")
+
+bf.print_bins(packed_bins)
