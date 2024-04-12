@@ -8,12 +8,12 @@ The app will include an interface to allow the user to select the container, sel
 
 import pandas as pd
 import streamlit as st
-import bp_func as bf
 import numpy as np
+import pages.functions.bp_func as bf
 
 st.set_page_config(layout="wide")
 
-st.title("Bin Packing Test")
+st.title("📦 Bin Packing Test")
 st.write("## Algorithm Centralized Approach")
 st.write("Item ledger configuration for bin packing. The app will include an interface to allow the user to select the container, select the mission type, then filter the items to be packed. The app will then display the bin packing results.")
 
@@ -34,14 +34,11 @@ containers = df.loc[df['utilization'] == 'Container']
 items = df.loc[df['utilization'] != 'Container']
 items.insert(2, 'count', 1)
 
-del df
-
 items['size'] = items['volume'].apply(bf.classify_size)
 
 #%% Display Data
 
-expand_import = st.expander("View Imported Data")
-with expand_import:
+with st.expander("View Imported Data"):
     st.write("#### Containers")
     st.dataframe(containers)
     st.write("#### Items")
