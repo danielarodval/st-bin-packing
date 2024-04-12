@@ -14,7 +14,8 @@ import numpy as np
 st.set_page_config(layout="wide")
 
 st.title("Bin Packing Test")
-st.write("## Item Ledger Configuration")
+st.write("## Algorithm Centralized Approach")
+st.write("Item ledger configuration for bin packing. The app will include an interface to allow the user to select the container, select the mission type, then filter the items to be packed. The app will then display the bin packing results.")
 
 #%% Load Data
 df = pd.read_csv('Cost Estimates.csv')
