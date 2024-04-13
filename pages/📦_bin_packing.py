@@ -30,11 +30,11 @@ df.columns= df.columns.str.strip()
 df = df.iloc[:, 6:]
 df = df.drop(df.columns[[3, 5, 6, 14]], axis=1)
 
-containers = df.loc[df['utilization'] == 'Container']
-items = df.loc[df['utilization'] != 'Container']
-items.insert(2, 'count', 1)
+containers = df.loc[df['utilization'] == 'Container'].copy()  # Use copy here
+items = df.loc[df['utilization'] != 'Container'].copy()  # Use copy here
+items['count'] = 1  # Direct assignment without loc since it's a clean copy
+items['size'] = items['volume'].apply(bf.classify_size)  # Direct assignment without loc since it's a clean copy
 
-items['size'] = items['volume'].apply(bf.classify_size)
 
 #%% Display Data
 
