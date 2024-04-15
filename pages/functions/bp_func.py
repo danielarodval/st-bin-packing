@@ -15,17 +15,23 @@ class Item:
         self.packed_count = 0
 
 class Bin:
-    def __init__(self, max_length, max_width, max_height, max_volume, max_weight):
-        self.items = []  # List of items
-        self.stacks = []  # List of stacks, each stack is a list of items
+    _id_counter = 0  # Class variable to keep track of bin IDs
+
+    def __init__(self, max_length, max_width, max_height, max_volume, max_weight, bin_type, name):
+        self.id = Bin._id_counter  # Unique ID for each bin instance
+        Bin._id_counter += 1  # Increment the ID counter
+
         self.max_length = max_length
         self.max_width = max_width
         self.max_height = max_height
         self.max_volume = max_volume
         self.max_weight = max_weight
+        self.Type = bin_type
+        self.name = name
+        self.items = []  # List of items
+        self.stacks = []  # List of stacks, each stack is a list of items
         self.current_volume = 0
         self.current_weight = 0
-
     def can_fit(self, item):
         # Check if the item fits within the bin's remaining dimensions and weight
         if (self.current_volume + item.volume <= self.max_volume and

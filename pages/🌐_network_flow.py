@@ -75,26 +75,23 @@ for container, count in selected_containers.items():
             max_weight=container_specs['weight'],
             max_height=container_specs['height'],
             max_length=container_specs['length'],
-            max_width=container_specs['width']))
+            max_width=container_specs['width'],
+            bin_type=container_specs['unit'],
+            name=container_specs['item']))
 
-#%% Generated Code
+#%% Create Network
 st.divider()
-# Define manifest and containers
-manifest = {
-    'Item1': 10,
-    'Item2': 20,
-    'Item3': 15
-}
-containers = {
-    'Container1': 20,
-    'Container2': 25
-}
+
+nf_naming_convention = {
+    'Source':'Ledger',
+    'Sink':'TEU'
+    }
 
 # Create the network flow graph
-G = nf.create_flow_network(manifest, containers)
+G = nf.create_flow_network_binned(mission_items, bins, nf_naming_convention)
 
 # Compute maximum flow
-flow_value, flow_dict = nx.maximum_flow(G, 'Ledger', 'TEU')
+flow_value, flow_dict = nx.maximum_flow(G, nf_naming_convention['Source'], nf_naming_convention['Sink'])
 
 # Display the graph
 btn_col1, btn_col2, btn_col3 = st.columns(3)
@@ -112,14 +109,63 @@ with btn_col3:
 if dis_graph:
     st.pyplot(nf.display_graph(G))
 
+with st.sidebar:
+        st.write("### Network Flow Results")
+        st.write("Maximum flow value (total loaded volume):", flow_value)
+        st.write("Flow along each edge:")
+        for node in flow_dict:
+            for conn in flow_dict[node]:
+                if flow_dict[node][conn] > 0:
+                    st.write(f"{node} -> {conn}: {flow_dict[node][conn]}")
+
+#%% Generated Code
 st.divider()
 
-# Display results
-with st.sidebar:
-    st.write("### Network Flow Results")
-    st.write("Maximum flow value (total loaded volume):", flow_value)
-    st.write("Flow along each edge:")
-    for node in flow_dict:
-        for conn in flow_dict[node]:
-            if flow_dict[node][conn] > 0:
-                st.write(f"{node} -> {conn}: {flow_dict[node][conn]}")
+st.write("### General Implementation")
+with st.expander("View Code"):
+    st.code("""
+    # Define manifest and containers
+    manifest = {
+        'Item1': 10,
+        'Item2': 20,
+        'Item3': 15
+    }
+    containers = {
+        'Container1': 20,
+        'Container2': 25
+    }
+
+    # Create the network flow graph
+    G = nf.create_flow_network(manifest, containers)
+
+    # Compute maximum flow
+    flow_value, flow_dict = nx.maximum_flow(G, 'Ledger', 'TEU')
+
+    # Display the graph
+    btn_col1, btn_col2, btn_col3 = st.columns(3)
+    dis_graph = False
+    with btn_col1:
+        
+        if st.button('Display Graph'):
+            dis_graph = True
+        else:
+            st.write("Click the button to display the graph.")
+
+    with btn_col3:
+        st.button("Hide Graph", type="primary")
+
+    if dis_graph:
+        st.pyplot(nf.display_graph(G))
+
+    st.divider()
+
+    # Display results
+    with st.sidebar:
+        st.write("### Network Flow Results")
+        st.write("Maximum flow value (total loaded volume):", flow_value)
+        st.write("Flow along each edge:")
+        for node in flow_dict:
+            for conn in flow_dict[node]:
+                if flow_dict[node][conn] > 0:
+                    st.write(f"{node} -> {conn}: {flow_dict[node][conn]}")
+    """)
