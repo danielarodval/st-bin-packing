@@ -4,6 +4,7 @@ import pages.functions.nflow as nf
 import networkx as nx
 import pandas as pd
 import pages.functions.bp_func as bf
+import random
 
 st.set_page_config(layout="wide")
 st.title("🌐 Network Flow Test")
@@ -26,7 +27,6 @@ df = df.drop(df.columns[[3, 5, 6, 14]], axis=1)
 
 containers = df.loc[df['utilization'] == 'Container'].copy()  # Use copy here
 items = df.loc[df['utilization'] != 'Container'].copy()  # Use copy here
-items['count'] = 1  # Direct assignment without loc since it's a clean copy
 items['size'] = items['volume'].apply(bf.classify_size)  # Direct assignment without loc since it's a clean copy
 
 #%% Display Data
@@ -50,6 +50,13 @@ if total_containers > 12:
 st.divider()
 #%% Select Mission Type
 st.write("### Item Selection")
+rand_item_ct = st.checkbox("Randomize Item Counts")
+
+if rand_item_ct:
+    items['count'] = [random.randint(1, 20) for _ in range(len(items))]
+else:
+    items['count'] = 0  # Direct assignment without loc since it's a clean copy
+
 mission_types = items.loc[items['utilization'] != 'General', 'utilization'].unique()
 selected_mission_types = st.multiselect("Select Mission Types", mission_types)
 if 'General' in selected_mission_types or not selected_mission_types:
@@ -62,6 +69,7 @@ else:
 expand_items = st.expander("View Mission Items")
 with expand_items:
     mission_items = st.data_editor(mission_items)
+    dis_graph = False
 
 #%% Initialize Bins based on selected containers & items
 item_objects = [bf.Item(row['item'], row['length'], row['width'], row['height'], row['weight'], row['volume'], row['utilization'], row['size'], row['count']) for index, row in mission_items.iterrows()]
@@ -94,20 +102,13 @@ G = nf.create_flow_network_binned(mission_items, bins, nf_naming_convention)
 flow_value, flow_dict = nx.maximum_flow(G, nf_naming_convention['Source'], nf_naming_convention['Sink'])
 
 # Display the graph
-btn_col1, btn_col2, btn_col3 = st.columns(3)
-dis_graph = False
-with btn_col1:
-    
-    if st.button('Display Graph'):
-        dis_graph = True
-    else:
-        st.write("Click the button to display the graph.")
-
-with btn_col3:
-    st.button("Hide Graph", type="primary")
+st.write("### Network Flow Graph")
+dis_graph = st.checkbox("Display Graph")
 
 if dis_graph:
     st.pyplot(nf.display_graph(G,nf_naming_convention, bins))
+else:
+    st.write("Click the checkbox to display the graph.")
 
 with st.sidebar:
         st.write("### Network Flow Results")
