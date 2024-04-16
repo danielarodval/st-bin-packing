@@ -50,14 +50,27 @@ def create_flow_network_binned(items, bins, naming_convention):
 
     return G
 
-def display_graph(G):
+def display_graph(G,naming_convention, bins):
     # create matplotlibn figure
     fig, ax = plt.subplots(figsize=(25, 15))
     # calculate the position of the nodes
     pos = nx.spring_layout(G)
+
+    # defining colors for the nodes
+    node_colors = []
+    for node in G.nodes():
+        if node == naming_convention['Source']:
+            node_colors.append('#c3a2ca')
+        elif node == naming_convention['Sink']:
+            node_colors.append('lightcoral')
+        elif any(node == bin.name for bin in bins):
+            node_colors.append('lightgreen')
+        else:
+            node_colors.append('lightblue')
+
     # draw the network
     edge_labels = {(n1, n2): d['capacity'] for n1, n2, d in G.edges(data=True)}
-    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=2000, font_size=10, font_weight='bold')
+    nx.draw_networkx(G, pos, with_labels=True, node_color=node_colors, node_size=2000, font_size=10, font_weight='bold')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
 
     return fig

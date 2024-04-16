@@ -73,7 +73,8 @@ bins = [bf.Bin(
     max_height=container['height'].values[0],
     max_length=container['length'].values[0],
     max_width=container['width'].values[0],
-    bin_type=container['unit']) for _ in range(num_bins)]  # Initialize bins
+    bin_type=container['unit'],
+    name=container['item']) for _ in range(num_bins)]  # Initialize bins
 
 #%% Example usage
 st.write("## Modeling")

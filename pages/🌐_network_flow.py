@@ -107,7 +107,7 @@ with btn_col3:
     st.button("Hide Graph", type="primary")
 
 if dis_graph:
-    st.pyplot(nf.display_graph(G))
+    st.pyplot(nf.display_graph(G,nf_naming_convention, bins))
 
 with st.sidebar:
         st.write("### Network Flow Results")
