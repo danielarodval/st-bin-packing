@@ -4,7 +4,7 @@ st.set_page_config(layout="wide")
 
 # introduction
 st.title("🏠 Home Page")
-st.write("## Welcome to the Manifest Loading Testing Application")
+st.write("## Welcome to the Logistics Algorithm Testing")
 st.write("This application is designed to test different algorithms for loading items into containers. The app will include an interface to allow the user to select the container, select the mission type, then filter the items to be packed. The app will then display the bin packing results.")
 st.write("**Please select a page from the sidebar to get started.**")
 
